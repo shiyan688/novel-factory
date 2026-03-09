@@ -1,0 +1,299 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://novelfactory.local/schema/v1/book-model-pack.schema.json",
+  "title": "BookModelPack v1",
+  "type": "object",
+  "required": [
+    "metadata",
+    "book_id",
+    "title",
+    "genre",
+    "story_dna",
+    "style_profile",
+    "characters",
+    "arcs",
+    "chapters",
+    "scenes",
+    "world_rules",
+    "foreshadow_payoff_pairs",
+    "pattern_refs"
+  ],
+  "properties": {
+    "metadata": {
+      "$ref": "common.schema.json#/$defs/metadata"
+    },
+    "book_id": {
+      "$ref": "common.schema.json#/$defs/book_id"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "genre": {
+      "$ref": "common.schema.json#/$defs/genre_array"
+    },
+    "story_dna": {
+      "type": "object",
+      "required": [
+        "core_promise",
+        "main_conflict",
+        "pleasure_points",
+        "theme"
+      ],
+      "properties": {
+        "core_promise": {
+          "type": "string"
+        },
+        "main_conflict": {
+          "type": "string"
+        },
+        "pleasure_points": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "theme": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "style_profile": {
+      "$ref": "style-profile.schema.json"
+    },
+    "characters": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "character_id",
+          "name",
+          "role",
+          "goals",
+          "weakness",
+          "arc_summary"
+        ],
+        "properties": {
+          "character_id": {
+            "$ref": "common.schema.json#/$defs/character_id"
+          },
+          "name": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          },
+          "goals": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "weakness": {
+            "type": "string"
+          },
+          "arc_summary": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "arcs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "arc_id",
+          "name",
+          "goal",
+          "obstacle",
+          "turning_point",
+          "climax",
+          "next_hook"
+        ],
+        "properties": {
+          "arc_id": {
+            "$ref": "common.schema.json#/$defs/arc_id"
+          },
+          "name": {
+            "type": "string"
+          },
+          "goal": {
+            "type": "string"
+          },
+          "obstacle": {
+            "type": "string"
+          },
+          "turning_point": {
+            "type": "string"
+          },
+          "climax": {
+            "type": "string"
+          },
+          "next_hook": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "chapters": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "chapter_id",
+          "arc_id",
+          "chapter_goal",
+          "conflict",
+          "turning_point",
+          "result",
+          "hook"
+        ],
+        "properties": {
+          "chapter_id": {
+            "$ref": "common.schema.json#/$defs/chapter_id"
+          },
+          "arc_id": {
+            "$ref": "common.schema.json#/$defs/arc_id"
+          },
+          "chapter_goal": {
+            "type": "string"
+          },
+          "conflict": {
+            "type": "string"
+          },
+          "turning_point": {
+            "type": "string"
+          },
+          "result": {
+            "type": "string"
+          },
+          "hook": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "scenes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "scene_id",
+          "chapter_id",
+          "scene_goal",
+          "obstacles",
+          "twist",
+          "result",
+          "mainline_progress"
+        ],
+        "properties": {
+          "scene_id": {
+            "$ref": "common.schema.json#/$defs/scene_id"
+          },
+          "chapter_id": {
+            "$ref": "common.schema.json#/$defs/chapter_id"
+          },
+          "scene_goal": {
+            "type": "string"
+          },
+          "obstacles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "twist": {
+            "type": "string"
+          },
+          "result": {
+            "type": "string"
+          },
+          "mainline_progress": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "world_rules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "rule_id",
+          "domain",
+          "rule_text",
+          "cost",
+          "violation_penalty"
+        ],
+        "properties": {
+          "rule_id": {
+            "type": "string",
+            "pattern": "^rule_[A-Za-z0-9_-]+$"
+          },
+          "domain": {
+            "type": "string"
+          },
+          "rule_text": {
+            "type": "string"
+          },
+          "cost": {
+            "type": "string"
+          },
+          "violation_penalty": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "foreshadow_payoff_pairs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "foreshadow_id",
+          "setup_ref",
+          "payoff_ref",
+          "status"
+        ],
+        "properties": {
+          "foreshadow_id": {
+            "$ref": "common.schema.json#/$defs/foreshadow_id"
+          },
+          "setup_ref": {
+            "type": "string"
+          },
+          "payoff_ref": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "planted",
+              "partially_paid",
+              "paid"
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "pattern_refs": {
+      "type": "array",
+      "items": {
+        "$ref": "common.schema.json#/$defs/pattern_id"
+      }
+    }
+  },
+  "additionalProperties": false
+}
+

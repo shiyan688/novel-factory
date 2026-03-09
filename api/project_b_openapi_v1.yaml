@@ -1,0 +1,1038 @@
+openapi: 3.1.0
+info:
+  title: NovelFactory Project B API
+  version: "1.0.0"
+  description: >
+    Autonomous topic -> bible -> outline -> draft -> review -> memory writeback APIs.
+    All payloads follow shared schema version v1.
+servers:
+  - url: http://localhost:8090
+tags:
+  - name: projects
+  - name: topic-ideas
+  - name: story-bibles
+  - name: outlines
+  - name: drafts
+  - name: reviews
+  - name: memory
+  - name: pipeline
+
+paths:
+  /v1/projects:
+    post:
+      tags: [projects]
+      summary: Create project
+      operationId: createProject
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProjectCreateRequest"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProjectResponse"
+
+  /v1/projects/{project_id}:
+    get:
+      tags: [projects]
+      summary: Get project
+      operationId: getProject
+      parameters:
+        - in: path
+          name: project_id
+          required: true
+          schema:
+            type: string
+            pattern: "^proj_[A-Za-z0-9_-]+$"
+      responses:
+        "200":
+          description: Project
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProjectResponse"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /v1/topic-ideas/generate:
+    post:
+      tags: [topic-ideas]
+      summary: Generate topic ideas
+      operationId: generateTopicIdeas
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TopicIdeaGenerateRequest"
+      responses:
+        "200":
+          description: Generated topic ideas
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TopicIdeaGenerateResponse"
+
+  /v1/topic-ideas/{idea_id}/select:
+    post:
+      tags: [topic-ideas]
+      summary: Select one topic idea
+      operationId: selectTopicIdea
+      parameters:
+        - in: path
+          name: idea_id
+          required: true
+          schema:
+            type: string
+            pattern: "^idea_[A-Za-z0-9_-]+$"
+      responses:
+        "200":
+          description: Selection result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SimpleStatusResponse"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /v1/story-bibles/generate:
+    post:
+      tags: [story-bibles]
+      summary: Generate story bible
+      operationId: generateStoryBible
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StoryBibleGenerateRequest"
+      responses:
+        "200":
+          description: StoryBible
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StoryBible"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /v1/story-bibles/{project_id}/latest:
+    get:
+      tags: [story-bibles]
+      summary: Get latest story bible by project
+      operationId: getLatestStoryBible
+      parameters:
+        - in: path
+          name: project_id
+          required: true
+          schema:
+            type: string
+            pattern: "^proj_[A-Za-z0-9_-]+$"
+      responses:
+        "200":
+          description: StoryBible
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StoryBible"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /v1/outlines/master/generate:
+    post:
+      tags: [outlines]
+      summary: Generate master outline
+      operationId: generateMasterOutline
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MasterOutlineGenerateRequest"
+      responses:
+        "200":
+          description: OutlinePack
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OutlinePack"
+
+  /v1/outlines/volume/generate:
+    post:
+      tags: [outlines]
+      summary: Generate volume outlines
+      operationId: generateVolumeOutline
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VolumeOutlineGenerateRequest"
+      responses:
+        "200":
+          description: OutlinePack
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OutlinePack"
+
+  /v1/outlines/chapter/generate:
+    post:
+      tags: [outlines]
+      summary: Generate chapter outlines
+      operationId: generateChapterOutline
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChapterOutlineGenerateRequest"
+      responses:
+        "200":
+          description: OutlinePack
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OutlinePack"
+
+  /v1/outlines/scene/generate:
+    post:
+      tags: [outlines]
+      summary: Generate scene outlines
+      operationId: generateSceneOutline
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SceneOutlineGenerateRequest"
+      responses:
+        "200":
+          description: OutlinePack
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OutlinePack"
+
+  /v1/outlines/{project_id}/latest:
+    get:
+      tags: [outlines]
+      summary: Get latest outline pack
+      operationId: getLatestOutlinePack
+      parameters:
+        - in: path
+          name: project_id
+          required: true
+          schema:
+            type: string
+            pattern: "^proj_[A-Za-z0-9_-]+$"
+      responses:
+        "200":
+          description: OutlinePack
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OutlinePack"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /v1/drafts/generate:
+    post:
+      tags: [drafts]
+      summary: Generate scene draft text
+      operationId: generateDraft
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DraftGenerateRequest"
+      responses:
+        "200":
+          description: DraftBundle
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DraftBundle"
+
+  /v1/drafts/{draft_id}:
+    get:
+      tags: [drafts]
+      summary: Get draft bundle
+      operationId: getDraft
+      parameters:
+        - in: path
+          name: draft_id
+          required: true
+          schema:
+            type: string
+            pattern: "^draft_[A-Za-z0-9_-]+$"
+      responses:
+        "200":
+          description: DraftBundle
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DraftBundle"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /v1/reviews/run:
+    post:
+      tags: [reviews]
+      summary: Run review checks on draft
+      operationId: runReview
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReviewRunRequest"
+      responses:
+        "200":
+          description: Review report
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReviewReport"
+
+  /v1/memory/writeback:
+    post:
+      tags: [memory]
+      summary: Write memory updates from approved draft
+      operationId: writebackMemory
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MemoryWritebackRequest"
+      responses:
+        "200":
+          description: Writeback event
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WritebackEvent"
+
+  /v1/memory/snapshots/{project_id}/latest:
+    get:
+      tags: [memory]
+      summary: Get latest memory snapshot
+      operationId: getLatestMemorySnapshot
+      parameters:
+        - in: path
+          name: project_id
+          required: true
+          schema:
+            type: string
+            pattern: "^proj_[A-Za-z0-9_-]+$"
+      responses:
+        "200":
+          description: Memory snapshot payload
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MemorySnapshot"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /v1/pipeline/runs/start:
+    post:
+      tags: [pipeline]
+      summary: Start autonomous pipeline run
+      operationId: startPipelineRun
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PipelineStartRequest"
+      responses:
+        "202":
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PipelineRunResponse"
+
+  /v1/pipeline/runs/{run_id}:
+    get:
+      tags: [pipeline]
+      summary: Get pipeline run status
+      operationId: getPipelineRun
+      parameters:
+        - in: path
+          name: run_id
+          required: true
+          schema:
+            type: string
+            pattern: "^run_[A-Za-z0-9_-]+$"
+      responses:
+        "200":
+          description: Pipeline run
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PipelineRunResponse"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+components:
+  responses:
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+
+  schemas:
+    Metadata:
+      type: object
+      required: [schema_version, producer, created_at, updated_at]
+      properties:
+        schema_version:
+          type: string
+          const: v1
+        producer:
+          type: string
+          enum: [project-a, project-b, shared]
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+      additionalProperties: false
+
+    ErrorResponse:
+      type: object
+      required: [code, message]
+      properties:
+        code: { type: string }
+        message: { type: string }
+      additionalProperties: false
+
+    SimpleStatusResponse:
+      type: object
+      required: [status]
+      properties:
+        status:
+          type: string
+      additionalProperties: false
+
+    ProjectCreateRequest:
+      type: object
+      required: [project_id, title_working, genre, target_platform, audience]
+      properties:
+        project_id:
+          type: string
+          pattern: "^proj_[A-Za-z0-9_-]+$"
+        title_working: { type: string }
+        genre:
+          type: array
+          minItems: 1
+          items: { type: string }
+        target_platform: { type: string }
+        audience:
+          type: array
+          minItems: 1
+          items: { type: string }
+        target_length_words:
+          type: integer
+          minimum: 0
+        volume_count:
+          type: integer
+          minimum: 0
+      additionalProperties: false
+
+    ProjectResponse:
+      type: object
+      required: [project_id, title_working, genre, target_platform, audience, status]
+      properties:
+        project_id:
+          type: string
+          pattern: "^proj_[A-Za-z0-9_-]+$"
+        title_working: { type: string }
+        genre:
+          type: array
+          items: { type: string }
+        target_platform: { type: string }
+        audience:
+          type: array
+          items: { type: string }
+        target_length_words:
+          type: integer
+          minimum: 0
+        volume_count:
+          type: integer
+          minimum: 0
+        status:
+          type: string
+      additionalProperties: false
+
+    TopicIdea:
+      type: object
+      required:
+        - metadata
+        - idea_id
+        - project_id
+        - logline
+        - genre
+        - selling_points
+        - risk_flags
+        - score_estimate
+      properties:
+        metadata:
+          $ref: "#/components/schemas/Metadata"
+        idea_id:
+          type: string
+          pattern: "^idea_[A-Za-z0-9_-]+$"
+        project_id:
+          type: string
+          pattern: "^proj_[A-Za-z0-9_-]+$"
+        logline:
+          type: string
+        genre:
+          type: array
+          items:
+            type: string
+        selling_points:
+          type: array
+          items:
+            type: string
+        risk_flags:
+          type: array
+          items:
+            type: string
+        score_estimate:
+          type: object
+          required: [hook, serial_potential, differentiation]
+          properties:
+            hook:
+              type: number
+              minimum: 0
+              maximum: 10
+            serial_potential:
+              type: number
+              minimum: 0
+              maximum: 10
+            differentiation:
+              type: number
+              minimum: 0
+              maximum: 10
+          additionalProperties: false
+      additionalProperties: false
+
+    TopicIdeaGenerateRequest:
+      type: object
+      required:
+        - project_id
+        - genre
+        - target_platform
+        - audience
+        - constraints
+        - pattern_pack_refs
+        - top_k
+      properties:
+        project_id:
+          type: string
+          pattern: "^proj_[A-Za-z0-9_-]+$"
+        genre:
+          type: array
+          minItems: 1
+          items: { type: string }
+        target_platform:
+          type: string
+        audience:
+          type: array
+          minItems: 1
+          items: { type: string }
+        constraints:
+          type: object
+          required: [forbidden_elements, must_have]
+          properties:
+            forbidden_elements:
+              type: array
+              items: { type: string }
+            must_have:
+              type: array
+              items: { type: string }
+          additionalProperties: false
+        pattern_pack_refs:
+          type: array
+          items:
+            type: string
+            pattern: "^gpp_[A-Za-z0-9_-]+$"
+        top_k:
+          type: integer
+          minimum: 1
+          maximum: 50
+      additionalProperties: false
+
+    TopicIdeaGenerateResponse:
+      type: object
+      required: [items, total]
+      properties:
+        total:
+          type: integer
+          minimum: 0
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/TopicIdea"
+      additionalProperties: false
+
+    StoryBible:
+      type: object
+      required:
+        - metadata
+        - project_id
+        - title_working
+        - genre
+        - target_platform
+        - audience
+        - story_dna
+        - world_bible
+        - character_bible
+        - hard_constraints
+        - ending_direction
+      properties:
+        metadata:
+          $ref: "#/components/schemas/Metadata"
+        project_id:
+          type: string
+          pattern: "^proj_[A-Za-z0-9_-]+$"
+        title_working:
+          type: string
+        genre:
+          type: array
+          items: { type: string }
+        target_platform:
+          type: string
+        audience:
+          type: array
+          items: { type: string }
+        story_dna:
+          type: object
+        world_bible:
+          type: object
+        character_bible:
+          type: array
+          items:
+            type: object
+        hard_constraints:
+          type: array
+          items:
+            type: string
+        ending_direction:
+          type: string
+      additionalProperties: false
+
+    StoryBibleGenerateRequest:
+      type: object
+      required: [project_id, idea_id, pattern_refs, style_profile_ref]
+      properties:
+        project_id:
+          type: string
+          pattern: "^proj_[A-Za-z0-9_-]+$"
+        idea_id:
+          type: string
+          pattern: "^idea_[A-Za-z0-9_-]+$"
+        pattern_refs:
+          type: array
+          items:
+            type: string
+            pattern: "^pat_[A-Za-z0-9_-]+$"
+        style_profile_ref:
+          type: string
+          pattern: "^style_[A-Za-z0-9_-]+$"
+      additionalProperties: false
+
+    OutlinePack:
+      type: object
+      required:
+        - metadata
+        - project_id
+        - outline_id
+        - level
+        - master_outline
+        - volume_outlines
+        - chapter_outlines
+        - scene_outlines
+      properties:
+        metadata:
+          $ref: "#/components/schemas/Metadata"
+        project_id:
+          type: string
+          pattern: "^proj_[A-Za-z0-9_-]+$"
+        outline_id:
+          type: string
+          pattern: "^out_[A-Za-z0-9_-]+$"
+        level:
+          type: string
+          enum: [master, volume, chapter, scene]
+        master_outline:
+          type: object
+        volume_outlines:
+          type: array
+          items:
+            type: object
+        chapter_outlines:
+          type: array
+          items:
+            type: object
+        scene_outlines:
+          type: array
+          items:
+            type: object
+      additionalProperties: false
+
+    MasterOutlineGenerateRequest:
+      type: object
+      required: [project_id, story_bible_id, target_length_words, volume_count]
+      properties:
+        project_id:
+          type: string
+          pattern: "^proj_[A-Za-z0-9_-]+$"
+        story_bible_id:
+          type: string
+          pattern: "^sb_[A-Za-z0-9_-]+$"
+        target_length_words:
+          type: integer
+          minimum: 1
+        volume_count:
+          type: integer
+          minimum: 1
+      additionalProperties: false
+
+    VolumeOutlineGenerateRequest:
+      type: object
+      required: [project_id, outline_id]
+      properties:
+        project_id:
+          type: string
+          pattern: "^proj_[A-Za-z0-9_-]+$"
+        outline_id:
+          type: string
+          pattern: "^out_[A-Za-z0-9_-]+$"
+      additionalProperties: false
+
+    ChapterOutlineGenerateRequest:
+      type: object
+      required: [project_id, volume_id, chapter_count]
+      properties:
+        project_id:
+          type: string
+          pattern: "^proj_[A-Za-z0-9_-]+$"
+        volume_id:
+          type: string
+          pattern: "^arc_[A-Za-z0-9_-]+$"
+        chapter_count:
+          type: integer
+          minimum: 1
+      additionalProperties: false
+
+    SceneOutlineGenerateRequest:
+      type: object
+      required: [project_id, chapter_id]
+      properties:
+        project_id:
+          type: string
+          pattern: "^proj_[A-Za-z0-9_-]+$"
+        chapter_id:
+          type: string
+          pattern: "^ch_[A-Za-z0-9_-]+$"
+      additionalProperties: false
+
+    DraftBundle:
+      type: object
+      required:
+        - metadata
+        - project_id
+        - draft_id
+        - chapter_id
+        - scene_id
+        - input_refs
+        - draft_text
+        - style_applied
+        - status
+      properties:
+        metadata:
+          $ref: "#/components/schemas/Metadata"
+        project_id:
+          type: string
+          pattern: "^proj_[A-Za-z0-9_-]+$"
+        draft_id:
+          type: string
+          pattern: "^draft_[A-Za-z0-9_-]+$"
+        chapter_id:
+          type: string
+          pattern: "^ch_[A-Za-z0-9_-]+$"
+        scene_id:
+          type: string
+          pattern: "^sc_[A-Za-z0-9_-]+$"
+        input_refs:
+          type: object
+          required: [story_bible_id, outline_id, memory_snapshot_id]
+          properties:
+            story_bible_id:
+              type: string
+              pattern: "^sb_[A-Za-z0-9_-]+$"
+            outline_id:
+              type: string
+              pattern: "^out_[A-Za-z0-9_-]+$"
+            memory_snapshot_id:
+              type: string
+              pattern: "^memsnap_[A-Za-z0-9_-]+$"
+          additionalProperties: false
+        draft_text:
+          type: string
+        style_applied:
+          type: object
+        status:
+          type: string
+          enum: [draft, revised, approved]
+      additionalProperties: false
+
+    DraftGenerateRequest:
+      type: object
+      required:
+        - project_id
+        - chapter_id
+        - scene_id
+        - story_bible_id
+        - outline_id
+        - memory_snapshot_id
+        - style_profile_ref
+      properties:
+        project_id:
+          type: string
+          pattern: "^proj_[A-Za-z0-9_-]+$"
+        chapter_id:
+          type: string
+          pattern: "^ch_[A-Za-z0-9_-]+$"
+        scene_id:
+          type: string
+          pattern: "^sc_[A-Za-z0-9_-]+$"
+        story_bible_id:
+          type: string
+          pattern: "^sb_[A-Za-z0-9_-]+$"
+        outline_id:
+          type: string
+          pattern: "^out_[A-Za-z0-9_-]+$"
+        memory_snapshot_id:
+          type: string
+          pattern: "^memsnap_[A-Za-z0-9_-]+$"
+        style_profile_ref:
+          type: string
+          pattern: "^style_[A-Za-z0-9_-]+$"
+      additionalProperties: false
+
+    ReviewReport:
+      type: object
+      required: [metadata, review_id, draft_id, scores, issues, decision]
+      properties:
+        metadata:
+          $ref: "#/components/schemas/Metadata"
+        review_id:
+          type: string
+          pattern: "^review_[A-Za-z0-9_-]+$"
+        draft_id:
+          type: string
+          pattern: "^draft_[A-Za-z0-9_-]+$"
+        scores:
+          type: object
+          required: [continuity, character_consistency, pace, hook, style_match]
+          properties:
+            continuity:
+              type: number
+              minimum: 0
+              maximum: 10
+            character_consistency:
+              type: number
+              minimum: 0
+              maximum: 10
+            pace:
+              type: number
+              minimum: 0
+              maximum: 10
+            hook:
+              type: number
+              minimum: 0
+              maximum: 10
+            style_match:
+              type: number
+              minimum: 0
+              maximum: 10
+          additionalProperties: false
+        issues:
+          type: array
+          items:
+            type: object
+            required: [issue_type, severity, location, description, fix_suggestion]
+            properties:
+              issue_type:
+                type: string
+                enum:
+                  - continuity
+                  - character_consistency
+                  - timeline
+                  - power_scaling
+                  - style_drift
+                  - hook_weakness
+              severity:
+                type: string
+                enum: [low, medium, high, critical]
+              location:
+                type: string
+              description:
+                type: string
+              fix_suggestion:
+                type: string
+            additionalProperties: false
+        decision:
+          type: string
+          enum: [pass, revise, required_rewrite]
+      additionalProperties: false
+
+    ReviewRunRequest:
+      type: object
+      required: [project_id, draft_id, checks]
+      properties:
+        project_id:
+          type: string
+          pattern: "^proj_[A-Za-z0-9_-]+$"
+        draft_id:
+          type: string
+          pattern: "^draft_[A-Za-z0-9_-]+$"
+        checks:
+          type: array
+          minItems: 1
+          items:
+            type: string
+            enum:
+              - continuity
+              - character_consistency
+              - pace
+              - hook
+              - style_match
+      additionalProperties: false
+
+    WritebackEvent:
+      type: object
+      required:
+        - metadata
+        - memory_event_id
+        - project_id
+        - chapter_id
+        - scene_id
+        - facts_added
+        - character_state_changes
+        - foreshadow_updates
+      properties:
+        metadata:
+          $ref: "#/components/schemas/Metadata"
+        memory_event_id:
+          type: string
+          pattern: "^memevt_[A-Za-z0-9_-]+$"
+        project_id:
+          type: string
+          pattern: "^proj_[A-Za-z0-9_-]+$"
+        chapter_id:
+          type: string
+          pattern: "^ch_[A-Za-z0-9_-]+$"
+        scene_id:
+          type: string
+          pattern: "^sc_[A-Za-z0-9_-]+$"
+        facts_added:
+          type: array
+          items:
+            type: object
+        character_state_changes:
+          type: array
+          items:
+            type: object
+        foreshadow_updates:
+          type: array
+          items:
+            type: object
+      additionalProperties: false
+
+    MemoryWritebackRequest:
+      type: object
+      required: [project_id, draft_id, review_id]
+      properties:
+        project_id:
+          type: string
+          pattern: "^proj_[A-Za-z0-9_-]+$"
+        draft_id:
+          type: string
+          pattern: "^draft_[A-Za-z0-9_-]+$"
+        review_id:
+          type: string
+          pattern: "^review_[A-Za-z0-9_-]+$"
+      additionalProperties: false
+
+    MemorySnapshot:
+      type: object
+      required: [memory_snapshot_id, project_id, snapshot_scope, snapshot_payload]
+      properties:
+        memory_snapshot_id:
+          type: string
+          pattern: "^memsnap_[A-Za-z0-9_-]+$"
+        project_id:
+          type: string
+          pattern: "^proj_[A-Za-z0-9_-]+$"
+        snapshot_scope:
+          type: string
+          enum: [chapter, scene, manual]
+        based_on_chapter_id:
+          type: string
+          pattern: "^ch_[A-Za-z0-9_-]+$"
+        snapshot_payload:
+          type: object
+      additionalProperties: false
+
+    PipelineStartRequest:
+      type: object
+      required: [project_id, from_state]
+      properties:
+        project_id:
+          type: string
+          pattern: "^proj_[A-Za-z0-9_-]+$"
+        from_state:
+          type: string
+          enum:
+            - initialized
+            - topic_generated
+            - bible_generated
+            - outline_generated
+            - drafting
+        to_state:
+          type: string
+      additionalProperties: false
+
+    PipelineRunResponse:
+      type: object
+      required: [run_id, project_id, current_state, status]
+      properties:
+        run_id:
+          type: string
+          pattern: "^run_[A-Za-z0-9_-]+$"
+        project_id:
+          type: string
+          pattern: "^proj_[A-Za-z0-9_-]+$"
+        current_state:
+          type: string
+        status:
+          type: string
+          enum: [running, paused, success, failed, canceled]
+      additionalProperties: false
+

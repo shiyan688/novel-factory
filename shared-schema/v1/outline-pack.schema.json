@@ -1,0 +1,198 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://novelfactory.local/schema/v1/outline-pack.schema.json",
+  "title": "OutlinePack v1",
+  "type": "object",
+  "required": [
+    "metadata",
+    "project_id",
+    "outline_id",
+    "level",
+    "master_outline",
+    "volume_outlines",
+    "chapter_outlines",
+    "scene_outlines"
+  ],
+  "properties": {
+    "metadata": {
+      "$ref": "common.schema.json#/$defs/metadata"
+    },
+    "project_id": {
+      "$ref": "common.schema.json#/$defs/project_id"
+    },
+    "outline_id": {
+      "type": "string",
+      "pattern": "^out_[A-Za-z0-9_-]+$"
+    },
+    "level": {
+      "type": "string",
+      "enum": [
+        "master",
+        "volume",
+        "chapter",
+        "scene"
+      ]
+    },
+    "master_outline": {
+      "type": "object"
+    },
+    "volume_outlines": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "arc_id",
+          "title",
+          "opening_state",
+          "goal",
+          "core_enemy",
+          "mid_misjudgment",
+          "climax",
+          "ending_hook"
+        ],
+        "properties": {
+          "arc_id": {
+            "$ref": "common.schema.json#/$defs/arc_id"
+          },
+          "title": {
+            "type": "string"
+          },
+          "opening_state": {
+            "type": "string"
+          },
+          "goal": {
+            "type": "string"
+          },
+          "core_enemy": {
+            "type": "string"
+          },
+          "mid_misjudgment": {
+            "type": "string"
+          },
+          "climax": {
+            "type": "string"
+          },
+          "ending_hook": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "chapter_outlines": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "chapter_id",
+          "volume_id",
+          "title",
+          "chapter_goal",
+          "plot_function",
+          "pov_character",
+          "entry_state",
+          "key_beats",
+          "exit_state"
+        ],
+        "properties": {
+          "chapter_id": {
+            "$ref": "common.schema.json#/$defs/chapter_id"
+          },
+          "volume_id": {
+            "$ref": "common.schema.json#/$defs/arc_id"
+          },
+          "title": {
+            "type": "string"
+          },
+          "chapter_goal": {
+            "type": "string"
+          },
+          "plot_function": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "pov_character": {
+            "type": "string"
+          },
+          "entry_state": {
+            "type": "object"
+          },
+          "key_beats": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "exit_state": {
+            "type": "object"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "scene_outlines": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "scene_id",
+          "chapter_id",
+          "scene_goal",
+          "location",
+          "participants",
+          "conflict_type",
+          "obstacles",
+          "twist",
+          "result",
+          "memory_writeback_candidates"
+        ],
+        "properties": {
+          "scene_id": {
+            "$ref": "common.schema.json#/$defs/scene_id"
+          },
+          "chapter_id": {
+            "$ref": "common.schema.json#/$defs/chapter_id"
+          },
+          "scene_goal": {
+            "type": "string"
+          },
+          "location": {
+            "type": "string"
+          },
+          "participants": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "conflict_type": {
+            "type": "string"
+          },
+          "obstacles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "twist": {
+            "type": "string"
+          },
+          "result": {
+            "type": "string"
+          },
+          "memory_writeback_candidates": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}
+

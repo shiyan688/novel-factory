@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://novelfactory.local/schema/v1/topic-idea.schema.json",
+  "title": "TopicIdea v1",
+  "type": "object",
+  "required": [
+    "metadata",
+    "idea_id",
+    "project_id",
+    "logline",
+    "genre",
+    "selling_points",
+    "risk_flags",
+    "score_estimate"
+  ],
+  "properties": {
+    "metadata": {
+      "$ref": "common.schema.json#/$defs/metadata"
+    },
+    "idea_id": {
+      "type": "string",
+      "pattern": "^idea_[A-Za-z0-9_-]+$"
+    },
+    "project_id": {
+      "$ref": "common.schema.json#/$defs/project_id"
+    },
+    "logline": {
+      "type": "string",
+      "minLength": 1
+    },
+    "genre": {
+      "$ref": "common.schema.json#/$defs/genre_array"
+    },
+    "selling_points": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "risk_flags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "score_estimate": {
+      "type": "object",
+      "required": [
+        "hook",
+        "serial_potential",
+        "differentiation"
+      ],
+      "properties": {
+        "hook": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "serial_potential": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "differentiation": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 10
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
+

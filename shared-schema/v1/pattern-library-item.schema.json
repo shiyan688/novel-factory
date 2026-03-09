@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://novelfactory.local/schema/v1/pattern-library-item.schema.json",
+  "title": "PatternLibraryItem v1",
+  "type": "object",
+  "required": [
+    "metadata",
+    "pattern_id",
+    "pattern_type",
+    "genre",
+    "summary",
+    "input_slots",
+    "expected_output",
+    "constraints"
+  ],
+  "properties": {
+    "metadata": {
+      "$ref": "common.schema.json#/$defs/metadata"
+    },
+    "pattern_id": {
+      "$ref": "common.schema.json#/$defs/pattern_id"
+    },
+    "pattern_type": {
+      "$ref": "common.schema.json#/$defs/pattern_type"
+    },
+    "genre": {
+      "$ref": "common.schema.json#/$defs/genre_array"
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 1
+    },
+    "input_slots": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "expected_output": {
+      "type": "object",
+      "additionalProperties": {
+        "type": [
+          "string",
+          "number",
+          "boolean",
+          "array"
+        ]
+      }
+    },
+    "constraints": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "example_refs": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^book_[A-Za-z0-9_-]+:ch_[A-Za-z0-9_-]+$"
+      }
+    }
+  },
+  "additionalProperties": false
+}
+

@@ -1,0 +1,112 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://novelfactory.local/schema/v1/review-report.schema.json",
+  "title": "ReviewReport v1",
+  "type": "object",
+  "required": [
+    "metadata",
+    "review_id",
+    "draft_id",
+    "scores",
+    "issues",
+    "decision"
+  ],
+  "properties": {
+    "metadata": {
+      "$ref": "common.schema.json#/$defs/metadata"
+    },
+    "review_id": {
+      "type": "string",
+      "pattern": "^review_[A-Za-z0-9_-]+$"
+    },
+    "draft_id": {
+      "type": "string",
+      "pattern": "^draft_[A-Za-z0-9_-]+$"
+    },
+    "scores": {
+      "type": "object",
+      "required": [
+        "continuity",
+        "character_consistency",
+        "pace",
+        "hook",
+        "style_match"
+      ],
+      "properties": {
+        "continuity": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "character_consistency": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "pace": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "hook": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "style_match": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 10
+        }
+      },
+      "additionalProperties": false
+    },
+    "issues": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "issue_type",
+          "severity",
+          "location",
+          "description",
+          "fix_suggestion"
+        ],
+        "properties": {
+          "issue_type": {
+            "$ref": "common.schema.json#/$defs/issue_type"
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "low",
+              "medium",
+              "high",
+              "critical"
+            ]
+          },
+          "location": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "fix_suggestion": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "decision": {
+      "type": "string",
+      "enum": [
+        "pass",
+        "revise",
+        "required_rewrite"
+      ]
+    }
+  },
+  "additionalProperties": false
+}
+

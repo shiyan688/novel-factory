@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://novelfactory.local/schema/v1/draft-bundle.schema.json",
+  "title": "DraftBundle v1",
+  "type": "object",
+  "required": [
+    "metadata",
+    "project_id",
+    "draft_id",
+    "chapter_id",
+    "scene_id",
+    "input_refs",
+    "draft_text",
+    "style_applied",
+    "status"
+  ],
+  "properties": {
+    "metadata": {
+      "$ref": "common.schema.json#/$defs/metadata"
+    },
+    "project_id": {
+      "$ref": "common.schema.json#/$defs/project_id"
+    },
+    "draft_id": {
+      "type": "string",
+      "pattern": "^draft_[A-Za-z0-9_-]+$"
+    },
+    "chapter_id": {
+      "$ref": "common.schema.json#/$defs/chapter_id"
+    },
+    "scene_id": {
+      "$ref": "common.schema.json#/$defs/scene_id"
+    },
+    "input_refs": {
+      "type": "object",
+      "required": [
+        "story_bible_id",
+        "outline_id",
+        "memory_snapshot_id"
+      ],
+      "properties": {
+        "story_bible_id": {
+          "$ref": "common.schema.json#/$defs/project_id"
+        },
+        "outline_id": {
+          "type": "string",
+          "pattern": "^out_[A-Za-z0-9_-]+$"
+        },
+        "memory_snapshot_id": {
+          "type": "string",
+          "pattern": "^memsnap_[A-Za-z0-9_-]+$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "draft_text": {
+      "type": "string",
+      "minLength": 1
+    },
+    "style_applied": {
+      "type": "object",
+      "required": [
+        "tone",
+        "dialogue_density"
+      ],
+      "properties": {
+        "tone": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "dialogue_density": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "revised",
+        "approved"
+      ]
+    }
+  },
+  "additionalProperties": false
+}
+

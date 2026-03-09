@@ -1,0 +1,527 @@
+openapi: 3.1.0
+info:
+  title: NovelFactory Project A API
+  version: "1.0.0"
+  description: >
+    Book deconstruction and outline database APIs.
+    All payloads follow shared schema version v1.
+servers:
+  - url: http://localhost:8080
+tags:
+  - name: source-books
+  - name: extraction-jobs
+  - name: model-pack
+  - name: patterns
+
+paths:
+  /v1/source-books/import:
+    post:
+      tags: [source-books]
+      summary: Import one source book
+      operationId: importSourceBook
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SourceBookImportRequest"
+      responses:
+        "202":
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ImportAcceptedResponse"
+
+  /v1/source-books/{book_id}:
+    get:
+      tags: [source-books]
+      summary: Get source book metadata
+      operationId: getSourceBook
+      parameters:
+        - in: path
+          name: book_id
+          required: true
+          schema:
+            type: string
+            pattern: "^book_[A-Za-z0-9_-]+$"
+      responses:
+        "200":
+          description: Source book metadata
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SourceBook"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /v1/extraction-jobs:
+    post:
+      tags: [extraction-jobs]
+      summary: Create an extraction job
+      operationId: createExtractionJob
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ExtractionJobCreateRequest"
+      responses:
+        "202":
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExtractionJobAcceptedResponse"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /v1/extraction-jobs/{job_id}:
+    get:
+      tags: [extraction-jobs]
+      summary: Get extraction job status
+      operationId: getExtractionJob
+      parameters:
+        - in: path
+          name: job_id
+          required: true
+          schema:
+            type: string
+            pattern: "^job_[A-Za-z0-9_-]+$"
+      responses:
+        "200":
+          description: Job status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExtractionJobStatusResponse"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /v1/books/{book_id}/model-pack:
+    get:
+      tags: [model-pack]
+      summary: Export BookModelPack
+      operationId: getBookModelPack
+      parameters:
+        - in: path
+          name: book_id
+          required: true
+          schema:
+            type: string
+            pattern: "^book_[A-Za-z0-9_-]+$"
+      responses:
+        "200":
+          description: BookModelPack payload
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BookModelPack"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /v1/patterns/search:
+    post:
+      tags: [patterns]
+      summary: Search pattern library
+      operationId: searchPatterns
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PatternSearchRequest"
+      responses:
+        "200":
+          description: Pattern search result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PatternSearchResponse"
+
+  /v1/genres/{genre}/pattern-pack:
+    get:
+      tags: [patterns]
+      summary: Get a genre pattern pack
+      operationId: getGenrePatternPack
+      parameters:
+        - in: path
+          name: genre
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: GenrePatternPack payload
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenrePatternPack"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+components:
+  responses:
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+
+  schemas:
+    Metadata:
+      type: object
+      required: [schema_version, producer, created_at, updated_at]
+      properties:
+        schema_version:
+          type: string
+          const: v1
+        producer:
+          type: string
+          enum: [project-a, project-b, shared]
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+      additionalProperties: false
+
+    ErrorResponse:
+      type: object
+      required: [code, message]
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+      additionalProperties: false
+
+    SourceBookImportRequest:
+      type: object
+      required: [title, genre_hint, source_type, content_ref]
+      properties:
+        title:
+          type: string
+        genre_hint:
+          type: array
+          minItems: 1
+          items:
+            type: string
+        source_type:
+          type: string
+          enum: [txt, docx, epub, markdown, json]
+        content_ref:
+          type: string
+        author_name:
+          type: string
+      additionalProperties: false
+
+    ImportAcceptedResponse:
+      type: object
+      required: [job_id, book_id, status]
+      properties:
+        job_id:
+          type: string
+          pattern: "^job_[A-Za-z0-9_-]+$"
+        book_id:
+          type: string
+          pattern: "^book_[A-Za-z0-9_-]+$"
+        status:
+          type: string
+          enum: [queued]
+      additionalProperties: false
+
+    SourceBook:
+      type: object
+      required: [book_id, title, genre, source_type, content_ref, status]
+      properties:
+        book_id:
+          type: string
+          pattern: "^book_[A-Za-z0-9_-]+$"
+        title:
+          type: string
+        genre:
+          type: array
+          items:
+            type: string
+        source_type:
+          type: string
+        content_ref:
+          type: string
+        status:
+          type: string
+          enum: [imported, extracting, modeled, failed]
+      additionalProperties: false
+
+    ExtractionJobCreateRequest:
+      type: object
+      required: [book_id, modes]
+      properties:
+        book_id:
+          type: string
+          pattern: "^book_[A-Za-z0-9_-]+$"
+        modes:
+          type: array
+          minItems: 1
+          items:
+            type: string
+            enum: [chapter, scene, character, world, style, pattern, foreshadow]
+      additionalProperties: false
+
+    ExtractionJobAcceptedResponse:
+      type: object
+      required: [job_id, book_id, status]
+      properties:
+        job_id:
+          type: string
+          pattern: "^job_[A-Za-z0-9_-]+$"
+        book_id:
+          type: string
+          pattern: "^book_[A-Za-z0-9_-]+$"
+        status:
+          type: string
+          enum: [queued]
+      additionalProperties: false
+
+    ExtractionJobStatusResponse:
+      type: object
+      required: [job_id, book_id, status, progress_percent]
+      properties:
+        job_id:
+          type: string
+          pattern: "^job_[A-Za-z0-9_-]+$"
+        book_id:
+          type: string
+          pattern: "^book_[A-Za-z0-9_-]+$"
+        status:
+          type: string
+          enum: [queued, running, success, failed, canceled]
+        progress_percent:
+          type: number
+          minimum: 0
+          maximum: 100
+        error_message:
+          type: string
+      additionalProperties: false
+
+    StyleProfile:
+      type: object
+      required:
+        - metadata
+        - style_id
+        - tone
+        - dialogue_density
+        - avg_sentence_length
+        - twist_frequency_per_10k
+        - hook_strength
+      properties:
+        metadata:
+          $ref: "#/components/schemas/Metadata"
+        style_id:
+          type: string
+          pattern: "^style_[A-Za-z0-9_-]+$"
+        tone:
+          type: array
+          items:
+            type: string
+        dialogue_density:
+          type: number
+          minimum: 0
+          maximum: 1
+        avg_sentence_length:
+          type: number
+          minimum: 1
+        twist_frequency_per_10k:
+          type: number
+          minimum: 0
+        hook_strength:
+          type: number
+          minimum: 0
+          maximum: 10
+      additionalProperties: false
+
+    BookModelPack:
+      type: object
+      required:
+        - metadata
+        - book_id
+        - title
+        - genre
+        - story_dna
+        - style_profile
+        - characters
+        - arcs
+        - chapters
+        - scenes
+        - world_rules
+        - foreshadow_payoff_pairs
+        - pattern_refs
+      properties:
+        metadata:
+          $ref: "#/components/schemas/Metadata"
+        book_id:
+          type: string
+          pattern: "^book_[A-Za-z0-9_-]+$"
+        title:
+          type: string
+        genre:
+          type: array
+          items:
+            type: string
+        story_dna:
+          type: object
+          required: [core_promise, main_conflict, pleasure_points, theme]
+          properties:
+            core_promise: { type: string }
+            main_conflict: { type: string }
+            pleasure_points:
+              type: array
+              items: { type: string }
+            theme:
+              type: array
+              items: { type: string }
+          additionalProperties: false
+        style_profile:
+          $ref: "#/components/schemas/StyleProfile"
+        characters:
+          type: array
+          items:
+            type: object
+        arcs:
+          type: array
+          items:
+            type: object
+        chapters:
+          type: array
+          items:
+            type: object
+        scenes:
+          type: array
+          items:
+            type: object
+        world_rules:
+          type: array
+          items:
+            type: object
+        foreshadow_payoff_pairs:
+          type: array
+          items:
+            type: object
+        pattern_refs:
+          type: array
+          items:
+            type: string
+            pattern: "^pat_[A-Za-z0-9_-]+$"
+      additionalProperties: false
+
+    PatternSearchRequest:
+      type: object
+      required: [genre, pattern_type, top_k]
+      properties:
+        genre:
+          type: array
+          minItems: 1
+          items:
+            type: string
+        pattern_type:
+          type: string
+          enum:
+            - opening_hook
+            - mid_twist
+            - chapter_cliffhanger
+            - power_escalation
+            - faction_conflict
+            - relationship_push
+            - foreshadow_setup
+            - foreshadow_payoff
+        constraints:
+          type: object
+          additionalProperties:
+            type: string
+        top_k:
+          type: integer
+          minimum: 1
+          maximum: 50
+      additionalProperties: false
+
+    PatternLibraryItem:
+      type: object
+      required:
+        - metadata
+        - pattern_id
+        - pattern_type
+        - genre
+        - summary
+        - input_slots
+        - expected_output
+        - constraints
+      properties:
+        metadata:
+          $ref: "#/components/schemas/Metadata"
+        pattern_id:
+          type: string
+          pattern: "^pat_[A-Za-z0-9_-]+$"
+        pattern_type:
+          type: string
+        genre:
+          type: array
+          items:
+            type: string
+        summary:
+          type: string
+        input_slots:
+          type: object
+          additionalProperties:
+            type: string
+        expected_output:
+          type: object
+          additionalProperties: true
+        constraints:
+          type: array
+          items:
+            type: string
+      additionalProperties: false
+
+    PatternSearchResponse:
+      type: object
+      required: [items, total]
+      properties:
+        total:
+          type: integer
+          minimum: 0
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/PatternLibraryItem"
+      additionalProperties: false
+
+    GenrePatternPack:
+      type: object
+      required: [metadata, genre_pack_id, genre, pattern_ids, style_profile_refs]
+      properties:
+        metadata:
+          $ref: "#/components/schemas/Metadata"
+        genre_pack_id:
+          type: string
+          pattern: "^gpp_[A-Za-z0-9_-]+$"
+        genre:
+          type: array
+          items:
+            type: string
+        pattern_ids:
+          type: array
+          items:
+            type: string
+            pattern: "^pat_[A-Za-z0-9_-]+$"
+        style_profile_refs:
+          type: array
+          items:
+            type: string
+            pattern: "^style_[A-Za-z0-9_-]+$"
+        selection_rules:
+          type: array
+          items:
+            type: string
+      additionalProperties: false

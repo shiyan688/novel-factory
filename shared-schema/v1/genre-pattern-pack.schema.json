@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://novelfactory.local/schema/v1/genre-pattern-pack.schema.json",
+  "title": "GenrePatternPack v1",
+  "type": "object",
+  "required": [
+    "metadata",
+    "genre_pack_id",
+    "genre",
+    "pattern_ids",
+    "style_profile_refs"
+  ],
+  "properties": {
+    "metadata": {
+      "$ref": "common.schema.json#/$defs/metadata"
+    },
+    "genre_pack_id": {
+      "type": "string",
+      "pattern": "^gpp_[A-Za-z0-9_-]+$"
+    },
+    "genre": {
+      "$ref": "common.schema.json#/$defs/genre_array"
+    },
+    "pattern_ids": {
+      "type": "array",
+      "items": {
+        "$ref": "common.schema.json#/$defs/pattern_id"
+      }
+    },
+    "style_profile_refs": {
+      "type": "array",
+      "items": {
+        "$ref": "common.schema.json#/$defs/style_id"
+      }
+    },
+    "selection_rules": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": false
+}
+

@@ -1,0 +1,130 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://novelfactory.local/schema/v1/memory-writeback-event.schema.json",
+  "title": "WritebackEvent v1",
+  "type": "object",
+  "required": [
+    "metadata",
+    "memory_event_id",
+    "project_id",
+    "chapter_id",
+    "scene_id",
+    "facts_added",
+    "character_state_changes",
+    "foreshadow_updates"
+  ],
+  "properties": {
+    "metadata": {
+      "$ref": "common.schema.json#/$defs/metadata"
+    },
+    "memory_event_id": {
+      "$ref": "common.schema.json#/$defs/memory_event_id"
+    },
+    "project_id": {
+      "$ref": "common.schema.json#/$defs/project_id"
+    },
+    "chapter_id": {
+      "$ref": "common.schema.json#/$defs/chapter_id"
+    },
+    "scene_id": {
+      "$ref": "common.schema.json#/$defs/scene_id"
+    },
+    "facts_added": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "fact_id",
+          "fact_type",
+          "subject",
+          "predicate",
+          "confidence",
+          "visibility"
+        ],
+        "properties": {
+          "fact_id": {
+            "type": "string",
+            "pattern": "^mem_[A-Za-z0-9_-]+$"
+          },
+          "fact_type": {
+            "type": "string",
+            "enum": [
+              "world_fact",
+              "character_fact",
+              "timeline_fact",
+              "resource_fact"
+            ]
+          },
+          "subject": {
+            "type": "string"
+          },
+          "predicate": {
+            "type": "string"
+          },
+          "confidence": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "visibility": {
+            "$ref": "common.schema.json#/$defs/visibility"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "character_state_changes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "character_id",
+          "field",
+          "old_value",
+          "new_value"
+        ],
+        "properties": {
+          "character_id": {
+            "$ref": "common.schema.json#/$defs/character_id"
+          },
+          "field": {
+            "type": "string"
+          },
+          "old_value": {
+            "type": "string"
+          },
+          "new_value": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "foreshadow_updates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "foreshadow_id",
+          "status"
+        ],
+        "properties": {
+          "foreshadow_id": {
+            "$ref": "common.schema.json#/$defs/foreshadow_id"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "planted",
+              "partially_paid",
+              "paid"
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}
+
