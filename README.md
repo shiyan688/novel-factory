@@ -2,6 +2,10 @@
 
 This repository now contains the executable baseline for the **book deconstruction workflow** (Project A), with a shared contract that is directly compatible with Project B.
 
+## Documentation
+
+- Full Chinese usage guide: `docs/usage_guide_zh.md`
+
 ## What is included
 
 - `shared-schema/v1/`: canonical JSON Schemas shared by Project A and Project B.
